@@ -1,0 +1,181 @@
+{% extends 'core/base.html' %}
+{% load static %}
+{% load humanize %}
+{% block contenido %}
+
+    <!-- Modal -->
+    <div class="modal fade bg-white" id="templatemo_search" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="w-100 pt-1 mb-5 text-right">
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form action="" method="get" class="modal-content modal-body border-0 p-0">
+                <div class="input-group mb-2">
+                    <input type="text" class="form-control" id="inputModalSearch" name="q" placeholder="Search ...">
+                    <button type="submit" class="input-group-text bg-success text-light">
+                        <i class="fa fa-fw fa-search text-white"></i>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="container">
+        <h1 style="text-align: center;">Menú de administración</h1>
+    </div>
+    <nav>
+        <div class="nav nav-tabs" id="nav-tab" role="tablist">
+            <button class="nav-link active" id="nav-home-tab" data-bs-toggle="tab" data-bs-target="#nav-home" type="button" role="tab" aria-controls="nav-home" aria-selected="true">Productos</button>
+            <button class="nav-link" id="nav-profile-tab" data-bs-toggle="tab" data-bs-target="#nav-profile" type="button" role="tab" aria-controls="nav-profile" aria-selected="false">Usuarios</button>
+            <button class="nav-link" id="nav-profile-tab" data-bs-toggle="tab" data-bs-target="#nav-pedido" type="button" role="tab" aria-controls="nav-profile" aria-selected="false">Pedidos</button>
+            <a href="{% url 'agregarprod' %}" class="btn btn-success btn-outline-black">Agregar Producto<img style="height: 20px;" src="{% static 'core/img/modificar.png' %}" alt=""></a>
+        </div>
+      </nav>
+      <div class="tab-content" id="nav-tabContent">
+        <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
+            <div class="container">
+                <div class="row">
+                    {% for prod in listaproductos %}
+                    <div class="col">
+                        <div class="card" style="width: 18rem;">
+                            <img src="{{ prod.imagen }}" class="card-img-top" alt="...">
+                            <div class="card-body">
+                            <h5 class="card-title">{{ prod.nombre }}</h5>
+                            <p class="card-text">{{ prod.descripcion }}</p>
+                            </div>
+                            <ul class="list-group list-group-flush">
+                            <li class="list-group-item">Marca: {{ prod.marca.descripcion|title }}</li>
+                            {% if prod.stock > 0 %}
+                                <li class="list-group-item">Stock: {{ prod.stock }} </li>
+                                {% else %}
+                                <li class="list-group-item">Producto agotado</li>
+                            {% endif %}
+                            {% if prod.vigente == True %}
+                                <li class="list-group-item">Producto vigente</li>
+                                {% else %}
+                                <li class="list-group-item">Producto no vigente</li>
+                            {% endif %}
+                            {% if prod.carrusel == True %}
+                                <li class="list-group-item">Está en carrusel</li>
+                                {% else %}
+                                <li class="list-group-item">No está en carrusel</li>
+                            {% endif %}
+                            </ul>
+                            <div class="card-body">
+                                <a href="{% url 'modificarprod' prod.id %}" class="btn btn-success btn-outline-black">Modificar <img style="height: 20px;" src="{% static 'core/img/modificar.png' %}" alt=""></a>
+                                <a onclick="delete_producto({{ prod.id }})" class="btn btn-danger btn-outline-black">Eliminar <img style="height: 20px;" src="{% static 'core/img/eliminar.png' %}" alt=""></a>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        <div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">
+            <div class="container">
+                <div class="row">
+                    {% for usuario in listausuarios %}
+                    <div class="col">
+                        <div class="card" style="width: 18rem;">
+                            {% if usuario.suscrito == False %}
+                            <img src="{% static 'core/img/usuariodefault.png' %}" class="card-img-top" alt="...">
+                            {% else %}
+                                <img src="{% static 'core/img/user-premium.png' %}" class="card-img-top" alt="...">
+                            {% endif %}
+                            <div class="card-body">
+                            <h5 class="card-title">{{ usuario.username }}</h5>
+                            <p class="card-text">{{ usuario.nombre }}</p>
+                            </div>
+                            <ul class="list-group list-group-flush">
+                            <li class="list-group-item">Dirección: {{ aux.direccion }}</li>
+                            {% if usuario.suscrito == True %}
+                                <li class="list-group-item">Usuario Premium</li>
+                                {% else %}
+                                <li class="list-group-item">Usuario no Premium</li>
+                            {% endif %}
+                            {% if usuario.is_active == True %}
+                                <li class="list-group-item">Usuario Activo</li>
+                                {% else %}
+                                <li class="list-group-item">Usuario Inactivo</li>
+                            {% endif %}
+                            
+                            </ul>
+                            <div class="card-body">
+                                <a href="{% url 'modificar_usuario' usuario.id %}" class="btn btn-success btn-outline-black">Modificar <img style="height: 20px;" src="{% static 'core/img/modificar.png' %}" alt=""></a>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+        </div>
+        <div class="tab-pane fade" id="nav-pedido" role="tabpanel" aria-labelledby="nav-pedido-tab">
+            <div class="container">
+                <div class="row">
+                    {% for despacho in listadespachos %}
+                    <div class="col">
+                        <div class="card" style="width: 18rem;">
+                            <div class="card-body">
+                            <h5 class="card-title">{{ despacho.id }}</h5>
+                            <p class="card-text">{{ despacho.usuario.nombre }}</p>
+                            </div>
+                            <ul class="list-group list-group-flush">
+                            <li class="list-group-item">Estado: {{ despacho.estado.descripcion }}</li>
+                            
+                            
+                            </ul>
+                            <div class="card-body">
+                                <a href="{% url 'modificardespacho' despacho.id %}" class="btn btn-success btn-outline-black">Modificar <img style="height: 20px;" src="{% static 'core/img/modificar.png' %}" alt=""></a>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+        </div>
+
+{% endblock %}
+    <!-- Start Script -->
+    <script src="assets/js/jquery-1.11.0.min.js"></script>
+    <script src="assets/js/jquery-migrate-1.2.1.min.js"></script>
+    <script src="assets/js/bootstrap.bundle.min.js"></script>
+    <script src="assets/js/templatemo.js"></script>
+    <script src="assets/js/custom.js"></script>
+    <!-- End Script -->
+    {% block script %}
+    <!-- Start Slider Script -->
+    <script src="assets/js/slick.min.js"></script>
+    <script>
+        $('#carousel-related-product').slick({
+            infinite: true,
+            arrows: false,
+            slidesToShow: 4,
+            slidesToScroll: 3,
+            dots: true,
+            responsive: [{
+                    breakpoint: 1024,
+                    settings: {
+                        slidesToShow: 3,
+                        slidesToScroll: 3
+                    }
+                },
+                {
+                    breakpoint: 600,
+                    settings: {
+                        slidesToShow: 2,
+                        slidesToScroll: 3
+                    }
+                },
+                {
+                    breakpoint: 480,
+                    settings: {
+                        slidesToShow: 2,
+                        slidesToScroll: 3
+                    }
+                }
+            ]
+        });
+    </script>
+    <!-- End Slider Script -->
+    {% endblock %}

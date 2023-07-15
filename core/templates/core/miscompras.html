@@ -1,0 +1,122 @@
+{% extends 'core/base.html' %}
+{% load static %}
+{% load humanize %}
+{% block contenido %}
+<div class="container">
+    <h1 style="text-align: center; margin-top: 2%;">
+        Mis productos
+    </h1>
+    <nav>
+        <div class="nav nav-tabs" id="nav-tab" role="tablist">
+          <button class="nav-link active" id="nav-home-tab" data-bs-toggle="tab" data-bs-target="#nav-home" type="button" role="tab" aria-controls="nav-home" aria-selected="true">Mis Pedidos</button>
+          <button class="nav-link" id="nav-profile-tab" data-bs-toggle="tab" data-bs-target="#nav-profile" type="button" role="tab" aria-controls="nav-profile" aria-selected="false">Mis Boletas</button>
+          </div>
+      </nav>
+      <div class="tab-content" id="nav-tabContent">
+        <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
+            {% for aux in listadespacho %}
+                {% if aux.usuario.id == user.id %}
+                <div class="card">
+                    <div class="card-body">
+                    <h5 class="card-title">N°Pedido: {{ aux.id }}</h5>
+                    <h6 class="card-title">N°Boleta: {{ aux.numboleta }}</h5>
+                    <p class="card-text">
+                        {% if aux.estado.id == 1 %}
+                            <p>Estado de pedido: Validación</p>
+                        {% elif aux.estado.id == 2 %}
+                            <p>Estado de pedido: Preparación</p>
+                        {% elif aux.estado.id == 3 %}
+                            <p>Estado de pedido: Reparto</p>
+                        {% elif aux.estado.id == 4 %}
+                            <p>Estado de pedido: Finalizado</p>
+                        {% endif %}
+                        <div class="progress" style="height: 50px;">
+                            {% if aux.estado.id == 1 %}
+                            <div class="progress-bar bg-secondary" role="progressbar" style="width: 25%" aria-valuenow="33" aria-valuemin="0" aria-valuemax="100"></div>
+                            {% elif aux.estado.id == 2 %}
+                            <div class="progress-bar bg-secondary" role="progressbar" style="width: 25%" aria-valuenow="33" aria-valuemin="0" aria-valuemax="100"></div>
+                            <div class="progress-bar bg-warning" role="progressbar" style="width: 25%" aria-valuenow="33" aria-valuemin="0" aria-valuemax="100"></div>
+                            {% elif aux.estado.id == 3 %}
+                            <div class="progress-bar bg-secondary" role="progressbar" style="width: 25%" aria-valuenow="33" aria-valuemin="0" aria-valuemax="100"></div>
+                            <div class="progress-bar bg-warning" role="progressbar" style="width: 25%" aria-valuenow="33" aria-valuemin="0" aria-valuemax="100"></div>
+                            <div class="progress-bar bg-info" role="progressbar" style="width: 25%" aria-valuenow="34" aria-valuemin="0" aria-valuemax="100"></div>
+                            {% elif aux.estado.id == 4 %}
+                            <div class="progress-bar bg-secondary" role="progressbar" style="width: 25%" aria-valuenow="33" aria-valuemin="0" aria-valuemax="100"></div>
+                            <div class="progress-bar bg-warning" role="progressbar" style="width: 25%" aria-valuenow="33" aria-valuemin="0" aria-valuemax="100"></div>
+                            <div class="progress-bar bg-info" role="progressbar" style="width: 25%" aria-valuenow="34" aria-valuemin="0" aria-valuemax="100"></div>
+                            <div class="progress-bar bg-success" role="progressbar" style="width: 25%" aria-valuenow="34" aria-valuemin="0" aria-valuemax="100"></div>
+                            {% endif %}
+                        </div>
+                    </p>
+                    </div>
+                </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+        <div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">
+            {% for bol in listaboleta %}
+                {% if bol.usuario.username == user.username %}
+                <div class="card">
+                    
+                    <div class="card-body">
+                        <h5 class="card-title">N°Folio: {{ bol.id }}</h5>
+                        <p class="card-text"></p>
+                        <a class="btn btn-primary" data-bs-toggle="collapse" href="#collapse{{ bol.id }}" role="button" aria-expanded="false" aria-controls="collapseExample">
+                            Ver detalle
+                        </a>
+                            <div class="collapse" id="collapse{{ bol.id }}">
+                                <div class="card card-body">
+                                    <div class="card">
+                                        <div class="card-body">
+                                          <h5 class="card-title">N°Folio: {{ bol.id }}</h5>
+                                          <p class="card-text">Nombre de cliente: {{ user.nombre }}</p>
+                                          <p class="card-text">Dirección cliente: {{ user.direccion }}</p>
+                                          <p class="card-text">Dirección de correo electrónico: {{ user.email }}</p>
+                                          <h6 class="card-text">Productos</h6>
+                                          <div class="row">
+                                            <div class="col-3">
+                                                {% for prod in bol.productos %}
+                                                    {% for aux in listaproducto %}
+                                                        {% if aux.id == prod %}
+                                                            <p style="margin-left: 5%;" class="card-text"> {{ aux.nombre }}</p>
+                                                        {% endif %}
+                                                        {% endfor %}
+                                                        {% endfor %}
+                                            </div>
+                                            <div class="col-2">
+                                                {% for det in listadetalleboleta %}
+                                                    {% if det.boleta.id == bol.id %}
+                                                        <p style="margin-left: 5%;" class="card-text">${{ det.producto.precio|intcomma }}</p>
+                                                    {% endif %}
+                                                {% endfor %}
+                                            </div>  
+                                            <div class="col-2">
+                                                {% for det in listadetalleboleta %}
+                                                    {% if det.boleta.id == bol.id %}
+                                                        <p style="margin-left: 5%;" class="card-text">x {{ det.cantidad }} </p>
+                                                    {% endif %}
+                                                {% endfor %}
+                                            </div>
+                                        </div>
+                                                    
+
+                                            <h3 style="text-align: end;" class="card-text">Total: {{ bol.total|intcomma }}</h3>
+                                        </div>
+                                    </div>
+                                    
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                     
+            {% endfor %}
+        </div>
+      </div>
+
+    
+    
+    
+    
+</div>
+{% endblock %}

@@ -1,0 +1,74 @@
+{% extends 'core/base.html' %}
+{% load static %}
+{% load humanize %}
+{% block contenido %}
+{% load custom_tags %}
+<!-- Start Content -->
+<div class="container py-5">
+    <div class="row">
+            <div class="row">
+                {% for aux in listaproductos %}
+                {% if aux.vigente == True %}
+                <div class="col-md-4">
+                    <div class="card mb-4 product-wap rounded-0" style="height: 600px;">
+                        <div class="card rounded-0">
+                            {% if aux.imagen %}
+                                {% if aux.stock > 0 %}
+                                
+                                <img class="card-img rounded-0 img-fluid" style="height: 250px;" src="{{ aux.imagen }}">
+                                
+                                {% else %}
+                                <a href="">
+                                    <img class="card-img rounded-0 img-fluid" style="height: 250px; filter: grayscale();" src="{{ aux.imagen }}">
+                                </a>
+                                {% endif %}
+                            {% else %}
+                            
+                            <img class="card-img rounded-0 img-fluid" style="height: 250px;" src="{% static 'core/img/Default.png' %}">
+                            
+                            {% endif %}
+                            
+                        </div>
+                        <div class="card-body">
+                            <a class="h2" style="text-decoration: solid;"><b>{{ aux.nombre }}</b></a>
+                            <p class="text-center mb-0">{{ aux.descripcion }}</p>
+                            <p class="text-center mb-0">Marca: {{ aux.marca.descripcion }}</p>
+                            
+                            {% if user.is_authenticated %}   
+                                {% if user.suscrito == False %}
+                                <p class="text-center mb-0">$ {{ aux.precio|intcomma }}</p>
+                                {% else %}
+                                <p class="text-center mb-0" style="text-decoration: line-through;">$ {{ aux.precio|intcomma }}</p>
+                                    {% with precio_ajustado=aux.precio|multiply:0.95 %}
+                                        <p class="text-center mb-0">$ {{ precio_ajustado|floatformat:0|intcomma }}</p>
+                                    {% endwith %}
+                                {% endif %}
+                            {% else %}
+                            <p class="text-center mb-0">$ {{ aux.precio|intcomma }}</p>    
+                            {% endif %}
+                            {% if aux.stock > 0 %}
+                            <p class="text-center mb-0">Stock disponible: {{ aux.stock }}</p>
+                            {% else %}
+                            <p class="text-center mb-0" style="color: red;">Producto sin stock</p>
+                            {% endif %}
+                            {% if user.is_authenticated %}
+                                        <a class="btn btn-success text-white mt-2" href="{% url 'agregar_al_carrito' id=aux.id %}"><i class="fas fa-cart-plus"></i> Agregar al carrito</a>
+                            {% else %}
+                                <a class="btn btn-success text-white mt-2" href="{% url 'carrito' %}"><i class="fas fa-cart-plus"></i> Agregar al carrito</a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+                {% endfor %}
+            </div>
+            <div div="row">
+                <ul class="pagination pagination-lg justify-content-end">
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- End Content -->
+
+{% endblock %}

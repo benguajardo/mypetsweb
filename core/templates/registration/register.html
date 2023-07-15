@@ -1,0 +1,23 @@
+{% extends 'core/base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block contenido %}
+<h1 class="d-flex justify-content-around align-items-center align-self-center font-weight-bold text-dark"> REGISTRO DE USUARIOS </h1>
+<div class="container">
+    <div class="row">
+        <div class="col-5 m-5">
+            <form method="POST">
+                {% csrf_token %}
+                {{ form | crispy }}
+                <input type="submit" class="btn btn-primary btn-block" value="Registrar">
+            </form>
+        </div>
+        <div class="col-5 m-5">
+            <h1 style="text-align: center;">Regístrate, es gratis!</h1>
+            <img src="{% static 'core/img/gato-suscripcion.png' %}" class="img-fluid" alt="" srcset="">
+            <p style="text-align: end;">(el gato está suscrito)</p>
+        </div>
+    </div>
+</div>
+{% endblock %}

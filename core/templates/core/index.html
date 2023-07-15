@@ -1,0 +1,164 @@
+{% extends 'core/base.html' %}
+{% load static %}
+{% load humanize %}
+{% block contenido %}
+{% if messages %}
+  <ul class="messages">
+    {% for message in messages %}
+      <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+    {% endfor %}
+  </ul>
+{% endif %}
+    <!-- Modal -->
+    <div class="modal fade bg-white" id="templatemo_search" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="w-100 pt-1 mb-5 text-right">
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form action="" method="get" class="modal-content modal-body border-0 p-0">
+                <div class="input-group mb-2">
+                    <input type="text" class="form-control" id="inputModalSearch" name="q" placeholder="Search ...">
+                    <button type="submit" class="input-group-text bg-success text-light">
+                        <i class="fa fa-fw fa-search text-white"></i>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Start Banner Hero -->
+    <div id="template-mo-zay-hero-carousel" class="carousel slide" data-bs-ride="carousel">
+        <div class="carousel-inner">
+            <div class="carousel-item active">
+                <div class="container">
+                    <div class="row p-5">
+                        <div class="mx-auto col-md-8 col-lg-6 order-lg-last">
+                            <img class="img-fluid" src="{% static 'core/img/perros ropa.jpg' %}" alt="">
+                        </div>
+                        <div class="col-lg-6 mb-0 d-flex align-items-center">
+                            <div class="text-align-left align-self-center">
+                                <h1 class="h1 text-success"><b>MyPetsPremium</b></h1>
+                                <h3 class="h2">Conviértete en un miembro Premium de MyPets con nuestra suscripción Gold.
+                                               Obtén hasta un 5% de descuento en todos los productos disponibles!
+                                <a href="{% url 'suscripcion' %}">
+                                </h3><button class="btn btn-success">¡Suscríbete aquí!</button>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% for aux in listaproductos %}
+            {% if aux.carrusel == True %}
+            <div class="carousel-item">
+                <div class="container">
+                    <div class="row p-5">
+                        {% if aux.imagen %}
+                        <div class="mx-auto col-md-8 col-lg-6 order-lg-last">
+                            <img class="img-fluid" style="height: 360px;" src="{{ aux.imagen }}" alt="">
+                        </div>
+                        {% else %}
+                        <div class="mx-auto col-md-8 col-lg-6 order-lg-last">
+                            <img class="img-fluid" style="height: 360px;" src="{% static 'core/img/Default.png' %}" alt="">
+                        </div>
+                        {% endif %}
+                        <div class="col-lg-6 mb-0 d-flex align-items-center">
+                            <div class="text-align-left align-self-center">
+                                <h1 class="h1 text-success"><b>{{ aux.nombre }}</b></h1>
+                                <h3 class="h3">{{ aux.descripcion }}</h3>
+                                <p>
+                                    <h4 class="h3">Marca: {{ aux.marca.descripcion }} <img src="{{ aux.marca.imagen }}" style="height: 50px" srcset=""></h4>
+                                </p>
+                                <a class="btn btn-success" href="{% url 'shop' %}">Ver Productos</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+            {% endfor %}
+        </div>
+        <a class="carousel-control-prev text-decoration-none w-auto ps-3" href="#template-mo-zay-hero-carousel" role="button" data-bs-slide="prev">
+            <i class="fas fa-chevron-left"></i>
+        </a>
+        <a class="carousel-control-next text-decoration-none w-auto pe-3" href="#template-mo-zay-hero-carousel" role="button" data-bs-slide="next">
+            <i class="fas fa-chevron-right"></i>
+        </a>
+    </div>
+    <!-- End Banner Hero -->
+
+    <!-- Start Featured Product -->
+    <section class="bg-light">
+        <div class="container py-5">
+            <div class="row text-center py-3">
+                <div class="col-lg-6 m-auto">
+                    <h1 class="h1 text-success"><b>Productos destacados</b></h1>
+                </div>
+            </div>
+            <div class="row">
+                {% for aux in listaproductos %}
+                    {% if aux.destacado == True %}
+                    {% if aux.stock > 0 %}
+                    {% if aux.vigente == True %}
+
+                    <div class="col-12 col-md-4 mb-4">
+                        <div class="card h-100">
+                            {% if aux.imagen %}
+                            <a href="">
+                                <img src="{{ aux.imagen }}" style="height: 300px;" class="card-img-top" alt="...">
+                            </a>
+                            {% else %}
+                            
+                                <img src="{% static 'core/img/Default.png' %}" style="height: 400px;" class="card-img-top" alt="...">
+                            
+                            {% endif %}
+                            <div class="card-body">
+                                <a  class="h2 text-decoration-none text-dark"><b>{{ aux.nombre }}</b></a>
+                                <p class="card-text">
+                                    {{ aux.descripcion }}
+                                </p>
+                                <ul class="list-unstyled d-flex justify-content-between">
+                                    <li class="text text-right"><b>${{ aux.precio|intcomma }}</b></li>
+                                </ul>
+                                <a class="btn btn-success" href="{% url 'shop' %}">Ver Productos</a>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                    {% endif %}
+                    {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+
+    <section class="container py-5">
+        <div class="row text-center pt-3">
+            <div class="col-lg-6 m-auto">
+                <h1 class="h1">Contamos con una gran variedad de productos para todo tipo de mascotas.</h1>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12 col-md-3 p-5 mt-3">
+                <a href="#"><img src="{% static 'core/img/perro.jpg' %}"  class="rounded-circle img-fluid border"></a>
+                <h5 class="text-center mt-3 mb-3">Perros</h5>
+                <p class="text-center"><a class="btn btn-success" href="{% url 'shop' %}">Ver productos</a></p>
+            </div>
+            <div class="col-12 col-md-3 p-5 mt-3">
+                <a href="#"><img src="{% static 'core/img/gatopelao.png' %}" style="height: 235px;" class="rounded-circle img-fluid border"></a>
+                <h2 class="h5 text-center mt-3 mb-3">Gatos</h2>
+                <p class="text-center"><a class="btn btn-success" href="{% url 'shop' %}">Ver productos</a></p>
+            </div>
+            <div class="col-12 col-md-3 p-5 mt-3">
+                <a href="#"><img src="{% static 'core/img/huron.jpg' %}"  style="height: 235px;" class="rounded-circle img-fluid border"></a>
+                <h2 class="h5 text-center mt-3 mb-3">Hurones</h2>
+                <p class="text-center"><a class="btn btn-success" href="{% url 'shop' %}">Ver productos</a></p>
+            </div>
+            <div class="col-12 col-md-3 p-5 mt-3">
+                <a href="#"><img src="{% static 'core/img/rata-novia' %}" style="height: 235px;" class="rounded-circle img-fluid border"></a>
+                <h2 class="h5 text-center mt-3 mb-3">Ratones</h2>
+                <p class="text-center"><a class="btn btn-success" href="{% url 'shop' %}">Ver productos</a></p>
+            </div>
+        </div>
+    </section>
+{% endblock %}
